@@ -2,7 +2,6 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
-#include <algorithm>
 #include <windows.h>
 #include <cstring>
 using namespace std;
@@ -80,11 +79,11 @@ void _default(void) {
 	cout << dictionary(11) << endl;
 	cout << dictionary(12);
 	dot();
-	cout<<"Press Enter to Start"<<endl;
+	cout << "Press Enter to Start" << endl;
 }
 
 void welcome(void) {
-	for(int i=21;i<29;++i){
+	for (int i = 21; i < 29; ++i) {
 		cout << dictionary(i) << endl;
 	}
 }
@@ -93,14 +92,15 @@ void success(void) {
 	cout << dictionary(31) << endl;
 }
 
-bool determine(void){
+bool determine(void) {
 	char ch;
-	cin>>ch;
-	if(ch=='Y'||ch=='y'){
+	cin >> ch;
+	if (ch == 'Y' || ch == 'y') {
 		cin.clear();
 		cin.ignore(1024, '\n');
 		return true;
-	}else{
+	}
+	else {
 		cin.clear();
 		cin.ignore(1024, '\n');
 		return false;
@@ -140,10 +140,10 @@ information::information(const information &obj) {
 	credit = new double[DNOL()];
 	grade = new double[DNOL()];
 	point = new double[DNOL()];
-	for(int i=0;i<DNOL();++i){
-		credit[i]=obj.credit[i];
-		grade[i]=obj.grade[i];
-		point[i]=obj.point[i];
+	for (int i = 0; i < DNOL(); ++i) {
+		credit[i] = obj.credit[i];
+		grade[i] = obj.grade[i];
+		point[i] = obj.point[i];
 	}
 	avePoint = obj.avePoint;
 }
@@ -223,7 +223,7 @@ public:
 	void looper_readVec(void);
 	bool avePoint_Search(void);
 	void pointSection(void);
-	void sortAndPrint(void);
+	void PointPrint(void);
 };
 
 process::process()
@@ -233,17 +233,18 @@ process::process()
 }
 
 void process::looper(void) {
-	unsigned short count=0;
-	cout<<dictionary(52)<<endl;
-	while (determine()){
+	unsigned short count = 0;
+	cout << dictionary(52) << endl;
+	while (determine()) {
 		loopee_inputf();
 		++count;
-		cout<<dictionary(52)<<endl;
+		cout << dictionary(52) << endl;
 	}
-	if(count!=NULL){
+	if (count != NULL) {
 		cout << "You add " << count << " students' information SUCCESSFULLY!" << endl;
-	}else{
-		cout<<"No Student information Added!"<<endl;
+	}
+	else {
+		cout << "No Student information Added!" << endl;
 	}
 	clear();
 }
@@ -275,10 +276,10 @@ void process::tip_inputf(unsigned short select, unsigned short sex_define) {
 		cout << repeat << pronoun << dictionary(63) << dictionary(0);
 		break;
 	case 3:
-		cout << repeat << pronoun << dictionary(64)<<endl;
+		cout << repeat << pronoun << dictionary(64) << endl;
 		break;
 	case 4:
-		cout << repeat << pronoun << dictionary(65)<<endl;
+		cout << repeat << pronoun << dictionary(65) << endl;
 		break;
 	case 5:
 		cout << dictionary(66);
@@ -364,7 +365,7 @@ void process::averaglizePoint(void) {
 
 bool process::selector(void) {
 	unsigned short num;
-	cin>>num;
+	cin >> num;
 	switch (num)
 	{
 	case 1:
@@ -377,7 +378,7 @@ bool process::selector(void) {
 		avePoint_Search();
 		break;
 	case 4:
-		sortAndPrint();
+		PointPrint();
 		break;
 	case 5:
 		pointSection();
@@ -445,18 +446,32 @@ void process::pointSection(void) {
 	clear();
 }
 
-void process::sortAndPrint(void) {
-	double *ptr = new double[box.students.size()];
+void process::PointPrint(void) {
+	vector<information> sorted;
+	vector<double> temp;
 	for (int i = 0; i < box.students.size(); ++i) {
-		ptr[i] = box.students[i].avePoint;
+		temp.push_back(box.students[i].avePoint);
 	}
-	sort(ptr, ptr + box.students.size());
+	while (temp.size() != NULL) {
+		double n = temp.at(0);
+		int m = 0; 
+		for (int i = 1; i < temp.size(); ++i) { 
+			if (temp.at(i) < n) { 
+				n = temp.at(i); 
+				m = i; 
+			}
+		}
+		sorted.push_back(box.students.at(m));
+		temp.erase(temp.begin() + m);
+	}
+	temp.clear();
 	cout << "Top 5 List" << endl;
 	for (int i = 0; i < 5; ++i) {
-		if(box.students.size()==i){
+		if (sorted.size() == i) {
 			break;
 		}
-		cout << "No." << i + 1 << "-----" << ptr[i] << endl;
+		cout << "No." << i + 1 << "--" << sorted.at(i).name << "--" << sorted.at(i).avePoint << endl;
 	}
+	sorted.clear();
 	clear();
 }
