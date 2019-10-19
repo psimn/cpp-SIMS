@@ -221,9 +221,11 @@ public:
 	void readVector(int section);
 	void readLists(double*, int);
 	void looper_readVec(void);
-	bool avePoint_Search(void);
+	void avePoint_Search(void);
 	void pointSection(void);
 	void PointPrint(void);
+	unsigned int helpMe(vector<unsigned int>&);
+	bool isYou(vector<unsigned int>&,int);
 };
 
 process::process()
@@ -324,6 +326,7 @@ void process::getInfo(unsigned short select) {
 }
 
 void process::getCredit(void) {
+	sumCredits = 0;
 	for (unsigned short i = 0; i < temp.default_num; ++i) {
 		cout << dictionary(64) << " No." << i + 1 << dictionary(0);
 		cin >> temp.credit[i];
@@ -347,6 +350,7 @@ void process::loopee_inputf(void) {
 }
 
 void process::calculatePoint(void) {
+	sumPoints = 0;
 	for (unsigned short i = 0; i < temp.default_num; ++i) {
 		if (temp.grade[i] >= 60) {
 			temp.point[i] = 4 - 3 * (100 - temp.grade[i]) / 40;
@@ -401,7 +405,7 @@ void process::looper_readVec(void) {
 	clear();
 }
 
-bool process::avePoint_Search(void) {
+void process::avePoint_Search(void) {
 	string NAME;
 	cout << "Plz type name supposed to be searched: ";
 	cin >> NAME;
@@ -410,7 +414,7 @@ bool process::avePoint_Search(void) {
 			cout << "Information was Found!" << endl;
 			cout << "Average Point is " << box.students[i].avePoint << endl;
 			clear();
-			return true;
+			return;
 		}
 	}
 	cout << "Unknown Name!!!" << endl;
@@ -448,23 +452,25 @@ void process::pointSection(void) {
 
 void process::PointPrint(void) {
 	vector<information> sorted;
-	vector<double> temp;
-	for (int i = 0; i < box.students.size(); ++i) {
-		temp.push_back(box.students[i].avePoint);
-	}
-	while (temp.size() != NULL) {
-		double n = temp.at(0);
-		int m = 0; 
-		for (int i = 1; i < temp.size(); ++i) { 
-			if (temp.at(i) < n) { 
-				n = temp.at(i); 
+	vector<unsigned int> checked;
+	while (checked.size() != box.students.size()) {
+		double n;
+		unsigned int m; 
+		for (int i = 0; i < box.students.size(); ++i) { 
+			m = helpMe(checked);
+			n = box.students.at(m).avePoint;
+			if(isYou(checked,i)){
+				continue;
+			}
+			if (box.students.at(i).avePoint < n) { 
+				n = box.students.at(i).avePoint; 
 				m = i; 
 			}
 		}
+		checked.push_back(m);
 		sorted.push_back(box.students.at(m));
-		temp.erase(temp.begin() + m);
 	}
-	temp.clear();
+	checked.clear();
 	cout << "Top 5 List" << endl;
 	for (int i = 0; i < 5; ++i) {
 		if (sorted.size() == i) {
@@ -474,4 +480,29 @@ void process::PointPrint(void) {
 	}
 	sorted.clear();
 	clear();
+}
+
+unsigned int process::helpMe(vector<unsigned int>&target){
+	bool isThere;
+	for(unsigned int i=0;i<box.students.size();++i){
+		isThere = false;
+		for(int j=0;j<target.size();++j){
+			if(i==target.at(j)){
+				isThere = true;
+			}
+		}
+		if(isThere){
+			continue;
+		}else{
+			return i;
+		}
+	}
+}
+
+bool process::isYou(vector<unsigned int>&target,int i){
+	for(int j=0;j<target.size();++j){
+		if(i==target.at(j)){
+			return true;
+		}
+	}
 }
